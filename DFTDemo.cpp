@@ -9,8 +9,8 @@ int main()
 	VideoCapture cam;
 	if(!cam.open(0))
 	{
-		return 1;
 		cout << "Couldn't open camera!" << endl;
+		return 1;
 	}
 
 	while (true) {
