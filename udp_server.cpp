@@ -1,8 +1,9 @@
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include "UDPMessenger.hpp"
 using namespace cv;
-using namespace std;
+using std::vector;
 
 //udp_server demo
 //Recieves an image from the client.
@@ -24,17 +25,11 @@ int main(int argc, char* argv[])
 		int imgsize = 0;
 		char* data = udpmsg.getChunks((uint32_t*)&imgsize);
 
-		//Basic technique of recomposing an image from an array
-		//shamelessly lifted off a stackoverflow post.
-		int ptr = 0;
-		for (int x = 0; x < recvImage.rows; x++)
-		{
-			for (int y = 0; y < recvImage.cols; y++)
-			{
-				recvImage.at<Vec3b>(x,y) = Vec3b(data[ptr], data[ptr+1], data[ptr+2]);
-				ptr += 3;
-			}
-		}
+		vector<uchar> decodeBuffer;
+		for (int i = 0; i < imgsize; i++)
+			decodeBuffer.push_back(data[i]);
+		imdecode(decodeBuffer, CV_LOAD_IMAGE_COLOR, &recvImage);
+
 		free(data);
 		imshow("Recieved image", recvImage);
 		waitKey(16);

@@ -1,8 +1,10 @@
 #include <stdio.h>
+#include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include "UDPMessenger.hpp"
 using namespace cv;
+using std::vector;
 
 //udp_client demo
 //Grabs an image from the camera and sends it to
@@ -16,7 +18,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	UDPMessenger udpmsg((char*)"127.0.0.1", 1701); //ugh
+	UDPMessenger udpmsg((char*)"0", 1701); //ugh
 	udpmsg.setDest(argv[1], atoi(argv[2]));
 	
 	VideoCapture cam;
@@ -26,12 +28,21 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+
+	vector<int> param(2);
+	param[0] = IMWRITE_JPEG_QUALITY;
+	param[1] = 80;
+
 	while (waitKey(1) != 27)
 	{	
 		Mat img;
 		cam >> img;
-		img = img.reshape(0,1);
-		udpmsg.sendChunks((const char*)img.data, img.total() * img.elemSize(), 10, 200);
+
+		//Encode to jpeg, quality 80%
+		vector<uchar> encodeBuffer;
+		imencode(".jpg", img, encodeBuffer, param);
+
+		udpmsg.sendChunks((const char*)&encodeBuffer[0], encodeBuffer.size(), 1);
 		waitKey(16); //wait 16ms
 	}
 	cam.release();
