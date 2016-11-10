@@ -6,7 +6,7 @@
 #include<raspicam/raspicam.h>
 using namespace raspicam;
 #endif
-#include "UDPMessenger.hpp":
+#include "UDPMessenger.hpp"
 using namespace cv;
 using std::vector;
 
@@ -26,9 +26,9 @@ int main(int argc, char* argv[])
 	udpmsg.setDest(argv[1], atoi(argv[2]));
 	
 #ifdef RASP_PI
-	VideoCapture cam;
-#else
 	RaspiCam_Cv cam;
+#else	
+	VideoCapture cam;
 #endif
 	if (!cam.open(0))
 	{
