@@ -3,7 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 #ifdef RASP_PI
-#include<raspicam/raspicam.h>
+#include <raspicam/raspicam_cv.h>
 using namespace raspicam;
 #endif
 #include "UDPMessenger.hpp"
@@ -43,7 +43,13 @@ int main(int argc, char* argv[])
 	while (waitKey(1) != 27)
 	{	
 		Mat img;
+
+#ifdef RASP_PI
+		cam.grab();
+		cam.retrieve(img);
+#else
 		cam >> img;
+#endif
 
 		//Encode to jpeg, quality 80%
 		vector<uchar> encodeBuffer;
