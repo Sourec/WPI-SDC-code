@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 	//So opencv uses HxW instead of WxH. Who the f**k does that?!
 	while (true)
 	{
-		Mat recvImage = Mat::zeros(480, 640, CV_8UC3);
+		Mat recvImage = Mat::zeros(720, 1280, CV_8UC3);
 		int imgsize = 0;
 		char* data = udpmsg.getChunks((uint32_t*)&imgsize);
 

@@ -2,7 +2,11 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include "UDPMessenger.hpp"
+#ifdef RASP_PI
+#include<raspicam/raspicam.h>
+using namespace raspicam;
+#endif
+#include "UDPMessenger.hpp":
 using namespace cv;
 using std::vector;
 
@@ -21,13 +25,16 @@ int main(int argc, char* argv[])
 	UDPMessenger udpmsg((char*)"0", 1701); //ugh
 	udpmsg.setDest(argv[1], atoi(argv[2]));
 	
+#ifdef RASP_PI
 	VideoCapture cam;
+#else
+	RaspiCam_Cv cam;
+#endif
 	if (!cam.open(0))
 	{
 		printf("Couldn't open camera!\n");
 		return 1;
 	}
-
 
 	vector<int> param(2);
 	param[0] = IMWRITE_JPEG_QUALITY;
