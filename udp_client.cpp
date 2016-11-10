@@ -27,14 +27,20 @@ int main(int argc, char* argv[])
 	
 #ifdef RASP_PI
 	RaspiCam_Cv cam;
+	if (!cam.open())
+	{
+		printf("Couldn't open camera!\n");
+		return 1;
+	}
 #else	
 	VideoCapture cam;
-#endif
 	if (!cam.open(0))
 	{
 		printf("Couldn't open camera!\n");
 		return 1;
 	}
+#endif
+	
 
 	vector<int> param(2);
 	param[0] = IMWRITE_JPEG_QUALITY;
