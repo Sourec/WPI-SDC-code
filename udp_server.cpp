@@ -19,18 +19,17 @@ int main(int argc, char* argv[])
 	UDPMessenger udpmsg(argv[1], atoi(argv[2]));
 
 	//So opencv uses HxW instead of WxH. Who the f**k does that?!
+	char data[UDP_MAX_SIZE];
 	while (true)
 	{
 		Mat recvImage = Mat::zeros(720, 1280, CV_8UC3);
-		int imgsize = 0;
-		char* data = udpmsg.getChunks((uint32_t*)&imgsize);
+		int imgsize = udpmsg.getMsg(data, UDP_MAX_SIZE);
 
 		vector<uchar> decodeBuffer;
 		for (int i = 0; i < imgsize; i++)
 			decodeBuffer.push_back(data[i]);
 		imdecode(decodeBuffer, CV_LOAD_IMAGE_COLOR, &recvImage);
 
-		free(data);
 		imshow("Recieved image", recvImage);
 		waitKey(16);
 	}

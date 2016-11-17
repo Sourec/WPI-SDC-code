@@ -28,19 +28,14 @@ int main(int argc, char* argv[])
 #ifdef RASP_PI
 	RaspiCam_Cv cam;
 	if (!cam.open())
-	{
-		printf("Couldn't open camera!\n");
-		return 1;
-	}
 #else	
 	VideoCapture cam;
 	if (!cam.open(0))
+#endif
 	{
 		printf("Couldn't open camera!\n");
 		return 1;
 	}
-#endif
-	
 
 	vector<int> param(2);
 	param[0] = IMWRITE_JPEG_QUALITY;
@@ -50,18 +45,14 @@ int main(int argc, char* argv[])
 	{	
 		Mat img;
 
-#ifdef RASP_PI
 		cam.grab();
 		cam.retrieve(img);
-#else
-		cam >> img;
-#endif
 
 		//Encode to jpeg, quality 80%
 		vector<uchar> encodeBuffer;
 		imencode(".jpg", img, encodeBuffer, param);
 
-		udpmsg.sendChunks((const char*)&encodeBuffer[0], encodeBuffer.size(), 1);
+		udpmsg.sendPacket((const char*)&encodeBuffer[0], encodeBuffer.size());
 		waitKey(16); //wait 16ms
 	}
 	cam.release();
